@@ -137,7 +137,7 @@ func main() {
 		for f := range ch {
 			f := f // https://golang.org/doc/faq#closures_and_goroutines
 			wg.Go(func() error {
-				d.Filename = filepath.Base(f.path)
+				data.Filename = filepath.Base(f.path)
 				if *checkonly {
 					// Check if file extension is known
 					lic, err := licenseHeader(f.path, t, data)
