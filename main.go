@@ -52,7 +52,7 @@ var (
 	spdx               spdxFlag
 
 	holder    = flag.String("c", "Google LLC", "copyright holder")
-	license   = flag.String("l", "apache", "license type: apache, bsd, mit, mpl")
+	license   = flag.String("l", "apache", "license type: apache, bsd, mit, mpl, ddn")
 	licensef  = flag.String("f", "", "license file")
 	year      = flag.String("y", fmt.Sprint(time.Now().Year()), "copyright year(s)")
 	verbose   = flag.Bool("v", false, "verbose mode: print the name of the files that are modified")
@@ -137,6 +137,7 @@ func main() {
 		for f := range ch {
 			f := f // https://golang.org/doc/faq#closures_and_goroutines
 			wg.Go(func() error {
+				d.Filename = filepath.Base(f.path)
 				if *checkonly {
 					// Check if file extension is known
 					lic, err := licenseHeader(f.path, t, data)
@@ -258,11 +259,11 @@ func licenseHeader(path string, tmpl *template.Template, data licenseData) ([]by
 	switch fileExtension(path) {
 	default:
 		return nil, nil
-	case ".c", ".h", ".gv":
-		lic, err = executeTemplate(tmpl, data, "/*", " * ", " */")
+	case ".c", ".h", ".gv", ".go", ".cpp", ".hpp", ".cc", ".proto":
+		lic, err = executeTemplate(tmpl, data, "/******************************************************************************", " * ", " ******************************************************************************/")
 	case ".js", ".mjs", ".cjs", ".jsx", ".tsx", ".css", ".scss", ".sass", ".tf", ".ts":
 		lic, err = executeTemplate(tmpl, data, "/**", " * ", " */")
-	case ".cc", ".cpp", ".cs", ".go", ".hh", ".hpp", ".java", ".m", ".mm", ".proto", ".rs", ".scala", ".swift", ".dart", ".groovy", ".kt", ".kts", ".v", ".sv":
+	case ".cs", ".hh", ".java", ".m", ".mm", ".rs", ".scala", ".swift", ".dart", ".groovy", ".kt", ".kts", ".v", ".sv":
 		lic, err = executeTemplate(tmpl, data, "", "// ", "")
 	case ".py", ".sh", ".yaml", ".yml", ".dockerfile", "dockerfile", ".rb", "gemfile", ".tcl", ".bzl":
 		lic, err = executeTemplate(tmpl, data, "", "# ", "")
