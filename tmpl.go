@@ -29,6 +29,7 @@ var licenseTemplate = map[string]string{
 	"MIT":        tmplMIT,
 	"bsd":        tmplBSD,
 	"MPL-2.0":    tmplMPL,
+	"DDN"    :    tmplDDN,
 }
 
 // maintain backwards compatibility by mapping legacy license types to their
@@ -37,6 +38,7 @@ var legacyLicenseTypes = map[string]string{
 	"apache": "Apache-2.0",
 	"mit":    "MIT",
 	"mpl":    "MPL-2.0",
+	"ddn":    "DDN",
 }
 
 // licenseData specifies the data used to fill out a license template.
@@ -44,6 +46,7 @@ type licenseData struct {
 	Year   string // Copyright year(s).
 	Holder string // Name of the copyright holder.
 	SPDXID string // SPDX Identifier
+	Filename string
 }
 
 // fetchTemplate returns the license template for the specified license and
@@ -101,6 +104,26 @@ func executeTemplate(t *template.Template, d licenseData, top, mid, bot string) 
 	return out.Bytes(), nil
 }
 
+const tmplDDN = `
+@file
+@copyright
+                              --- WARNING ---
+ 
+    This work contains trade secrets of DataDirect Networks, Inc.  Any
+    unauthorized use or disclosure of the work, or any part thereof, is
+    strictly prohibited.  Copyright in this work is the property of
+    DataDirect Networks.  All Rights Reserved.  In the event of publication,
+    the following notice shall apply:  Copyright 2021, DataDirect
+    Networks.
+ 
+@section DESCRIPTION
+ 
+  Name:       {{.Filename}}
+  Project:    RED
+
+  Description:
+
+`
 const tmplApache = `Copyright {{.Year}} {{.Holder}}
 
 Licensed under the Apache License, Version 2.0 (the "License");
